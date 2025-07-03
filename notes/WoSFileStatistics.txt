@@ -1,0 +1,93 @@
+======= All File Statistics =======
+.ent: 8221 
+.pccvx: 6845 
+.coll: 5199 
+.als: 1653 
+.pcapk: 596 
+.stall: 596 
+.pcsx: 582 
+.ens: 363 
+.traf_lt_infpc: 362 
+.ab: 362 
+.prelight: 361 
+.eb: 329 
+.json_ise: 308 
+.cut: 280 
+.qp: 279 
+.skelmap: 277 
+.uip3dt: 243 
+.bai: 241 
+.scgpc: 197 
+.ce: 185 
+.lego_mappc: 176 
+.pcac: 163 
+.uip3dw: 143 
+.cowbell: 121 
+.fx_cache: 91 
+.slim: 45 
+.asg: 28 
+.pcps: 25 
+.json_spawnprogression: 25 
+.json_conversation: 22 
+.spt: 7 
+.pcstoc: 6 
+.json_regioninfo: 6 
+.environment: 5 
+.txt: 5 
+.lang: 5 
+.json_questdesc: 5 
+.json_spawnitems: 5 
+.json_spawnpoints: 3 (MEGACITY.1161/F436.0xE47833BB.T62.json_spawnpoints,MEGACITY.1161/F435.0x655CB63D.T62.json_spawnpoints,MEGACITY.1161/F434.0x2EE0FF48.T62.json_spawnpoints)
+.json_def_values: 3 (MEGACITY.1161/F438.0x259369B5.rvb_default_obstacle_list.T64.json_def_values,MEGACITY.1161/F440.0xCA976FF5.rvb_generic_actor_defaults.T64.json_def_values,MEGACITY.1161/F439.0x3BF12826.rvb_generic_fd_defaults.T64.json_def_values)
+.path: 3 (MEGACITY.1161/F451.0xD7004743.T77.path,MEGACITY.1161/F450.0xA32EA2B7.T77.path,MEGACITY.1161/F449.0x47F2B8FA.T77.path)
+.lightbehavior: 2 (ACT2_MECH_INTRO.161/F035.0x40E71957.T31.lightbehavior,MEGACITY.1161/F365.0x55473833.fx_genhit_light.T31.lightbehavior)
+.effectcontainer: 2 (MEGACITY.1161/F366.0x55473833.fx_genhit_light.T33.effectcontainer,ACT2_MECH_INTRO.161/F036.0x9A7A3C46.fx_explo_5m.T33.effectcontainer)
+.smdecalparam: 2 (BOOST.9/F005.0x6998A7F8.uitrickracemarker.T44.smdecalparam,MEGACITY.1161/F392.0x003DAC39.Moon.T44.smdecalparam)
+.outdoors: 2 (GAME.705/F405.0x00000E9D.NO.T46.outdoors,MEGACITY.1161/F393.0xF8243B11.global.T46.outdoors)
+.slimlist: 2 (GAME.705/F460.0x28D432FD.T83.slimlist,GAME.705/F459.0x08BFC432.force_include.T83.slimlist)
+.pcvs: 2 (GAME.705/F680.0x8EE94D9E.blitter_vs.T102.pcvs,GAME.705/F679.0x63C0E44F.rvb_skysphere_vs.T102.pcvs)
+.json_meterbehavior: 2 (MEGACITY.1161/F401.0xE20A1382.redsuit_behaviors.T55.json_meterbehavior,MEGACITY.1161/F400.0xA50D50C4.blacksuit_behaviors.T55.json_meterbehavior)
+.desc: 1 (GAME.705/F001.0x07DBBC18.Level.T1.desc)
+.csv: 1 (GAME.705/F002.0x7AD02BE9.terrain_types.T4.csv)
+.pcgv: 1 (GAME.705/F005.0x055E9FEC.Master.T10.pcgv)
+.pcsv: 1 (GAME.705/F006.0x055E9FEC.Master.T11.pcsv)
+.graphicsoptions: 1 (GAME.705/F012.0xF8243B11.global.T32.graphicsoptions)
+.json_meterdata: 1 (GAME.705/F406.0x2A5138F1.T54.json_meterdata)
+.json_combomoveinfo: 1 (GAME.705/F407.0x10BE2341.common_combo_moves.T56.json_combomoveinfo)
+.json_upgrades: 1 (GAME.705/F409.0xEF1236AB.global_upgrades.T67.json_upgrades)
+.json_soundmap: 1 (GAME.705/F410.0xED399691.standard.T68.json_soundmap)
+.json_uicharinfo: 1 (GAME.705/F411.0x182E2E96.global_ui_char_info.T69.json_uicharinfo)
+.json_renderlod: 1 (GAME.705/F412.0x7EAD5DEE.rvb_render_mgr.T72.json_renderlod)
+.seed: 1 (GAME.705/F669.0x10C60962.SpeedTreeSeed.T97.seed)
+.wind: 1 (GAME.705/F670.0x025B8643.SpeedWind.T98.wind)
+.sndids: 1 (GAME.705/F672.0x61675C40.sound_index.T100.sndids)
+.sin: 1 (MEGACITY.1161/F001.0xEE185533.megacity.T2.sin)
+.dsg: 1 (MEGACITY.1161/F002.0xEE185533.megacity.T6.dsg)
+.stc: 1 (MEGACITY.1161/F003.0xEE185533.megacity.T7.stc)
+.gbmap: 1 (MEGACITY.1161/F028.0xEE185533.megacity.T12.gbmap)
+.vdepot: 1 (MEGACITY.1161/F363.0x3F4EC893.Vehicles.T28.vdepot)
+.citylods: 1 (MEGACITY.1161/F391.0x83CCD87B.LODlist.T39.citylods)
+.dayskycolor: 1 (MEGACITY.1161/F394.0xF8243B11.global.T47.dayskycolor)
+.nightskycolor: 1 (MEGACITY.1161/F395.0xF8243B11.global.T48.nightskycolor)
+.json_questlist: 1 (MEGACITY.1161/F407.0x10157CE5.Quests.T58.json_questlist)
+.json_spawntable: 1 (MEGACITY.1161/F408.0xF8243B11.global.T60.json_spawntable)
+.json_neighborhoodinfo: 1 (MEGACITY.1161/F437.0xF3E7368B.neighborhoods.T63.json_neighborhoodinfo)
+.json_progressmessages: 1 (MEGACITY.1161/F441.0xF8243B11.global.T65.json_progressmessages)
+.json_summonprogression: 1 (MEGACITY.1161/F447.0xF8243B11.global.T70.json_summonprogression)
+.json_environmentprogression: 1 (MEGACITY.1161/F448.0xF8243B11.global.T71.json_environmentprogression)
+.adjustmentlayerslibrary: 1 (Q03.115/F047.0x42315B3C.T45.adjustmentlayerslibrary)
+.smretrofitparam: 1 (Q03.115/F049.0x55F8EA55.smretrofitparam_roof.T52.smretrofitparam)
+.phatpalette: 1 (VEHICLE_TAXI.5/F002.0x614C2F40.v_sedan.T35.phatpalette)
+
+======= APKF Statistics =======
+MESH: 48795
+MAT: 43269
+ANIM: 20561
+TEX: 12388
+EFXB: 3327
+ASKL: 1692
+FX: 678
+SKEL: 489
+SANM: 407
+MORH: 94
+FONT: 5

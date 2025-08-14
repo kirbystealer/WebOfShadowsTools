@@ -1,0 +1,16 @@
+& .\richprint.exe "C:\...\drive\C\Games\Spider-Man Web of Shadows\image\pc\Spider-Man Web of Shadows.exe"
+Processing C:\...\drive\C\Games\Spider-Man Web of Shadows\image\pc\Spider-Man Web of Shadows.exe
+Target machine: x32
+@comp.id   id version count   description
+007ec497   7e  50327     3 [AOb] VS2005 (8.0)
+007dc627   7d  50727    12 [ASM] VS2005 build 50727
+0093521e   93  21022     2 [IMP] VS2008 build 21022
+007bc627   7b  50727    34 [IMP] VS2005 build 50727
+00010000    1      0   398 [---] Unmarked objects
+005d0fc3   5d   4035     3 [IMP] Windows Server 2003 SP1 DDK build 4035 (*)
+005f0fc3   5f   4035     4 [ C ] Windows Server 2003 SP1 DDK build 4035 (*)
+006dc627   6d  50727    27 [ C ] VS2005 build 50727
+006ec627   6e  50727   440 [C++] VS2005 build 50727
+007ac627   7a  50727     1 [EXP] VS2005 build 50727
+007cc627   7c  50727     1 [RES] VS2005 build 50727
+0078c627   78  50727     1 [LNK] VS2005 build 50727

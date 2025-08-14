@@ -1,4 +1,7 @@
 import string
+import json
+from functools import cached_property, lru_cache
+
 
 def print_hex(data, grouping=4, per_line=4, show_offsets=True, offset_start=0):
     padding_size = -len(data) & ((grouping * per_line) - 1)
@@ -19,3 +22,16 @@ def print_hex(data, grouping=4, per_line=4, show_offsets=True, offset_start=0):
         offsets = [f"0x{i:04X}" for i in range(offset_start, offset_start + len(data), grouping * per_line)]
         lines = ['\t'.join([offset, l]) for offset, l in zip(offsets, lines)]
     print('\n'.join(lines))
+
+
+# @lru_cache
+def get_hashes(filepath=r"resource/filename_hashes.json"):
+    import pathlib
+    p = pathlib.Path(pathlib.Path(__file__).parent.parent, filepath)
+    return json.loads(p.read_bytes())
+
+def hash_to_filename(hash_int):
+    known_hashes = get_hashes()
+    return known_hashes.get(f"0x{hash_int:08X}")
+    
+

@@ -1,6 +1,7 @@
 ### Using the unpack tool
 
-You will need `python-lzo` from `https://github.com/jd-boyd/python-lzo` to decompress PCPACK files.
+You will need `python-lzo` from `https://github.com/jd-boyd/python-lzo` to decompress PCPACK files. 
+
 Run `pip install --only-binary=:all: python-lzo` to install the precompiled wheel from PyPI.
 
 If you include the `-apk` option, raw pcapk components will be extracted to a .PCAPK directory as well.
@@ -27,9 +28,9 @@ options:
 
 ```
 
-So to extract all the files in `SOURCE_DIR`, including PCAPKs and using file index:
+So to extract all the files in `packs`, including PCAPKs and using file index:
 
-`python unpack-wos.py -apk -pfi -e "path\to\spiderman\image\pc\packs\GAME.PCPACK" "path\to\spiderman\all"`
+`python unpack-wos.py -apk -pfi -e "path\to\spiderman\image\pc\packs" "path\to\spiderman\extracted"`
 
 ### Using the wos library
 To iterate over files in a PCPACK:

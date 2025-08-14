@@ -2,13 +2,15 @@
 
 Some info and tools for reversing WoS.
 
+Resources are stored in PCPACK files. Assets like meshes, animations, skeletons, textures are stored in PCAPK files inside the PCPACK.
+
 `imhex`:
 ImHex patterns for various WoS formats.  
 `python`:
-Scripts for reading `PCPACK` and `pcapk` files.  
+Python tools for reading `PCPACK` and `pcapk` files.  
 
-`resource/filename_hashes.json`:
-Filename hashes (~90% complete) 
+`python/resource/filename_hashes.json`:
+Filename hashes (~95% complete) 
  
 `notes/WoSFileStatistics.txt`:
  counts of files from all PCPACK archives
@@ -16,53 +18,6 @@ Filename hashes (~90% complete)
  original development options found in the binary. Nearly all disabled in release build.  
 `notes/ghidra_slf.txt`:
  offsets of (slf) Script Library Functions in the binary. NOPed functions at end.
-
-### Using unpack scripts
-
-You will need `https://github.com/jd-boyd/python-lzo` to decompress PCPACK files.
-
-Resources are stored in PCPACK files. Assets like meshes, animations, skeletons, textures are stored in PCAPK files inside the PCPACK.
-To iterate over files in a PCPACK:
-```Python
-import pathlib
-import pcpack
-
-filename = "path/to/GAME.PCPACK"
-buffer = pathlib.Path(filename).read_bytes()
-archive = pcpack.PCPACKArchive(buffer)
-for f in archive.files:    
-    print(f.filename, f.dataSize, f.data[:100])
-``` 
-
-
-Files in a PCAPK can be made up of one or two components.
-`createStandaloneFile` merges them together and applies (some) of the patches in the patch table at the end of PCAPK.
-```Python
-import pathlib
-import pcapk
-
-PCAPK_FILE = "path/to/asset.pcapk"
-apkf_path = pathlib.Path(PCAPK_FILE)
-buffer = apkf_path.read_bytes()
-apkf = pcapk.APKFArchive(buffer)
-    
-for f in apkf.files():
-    dirname = apkf_path.parent.stem
-    outpath = pathlib.Path('./out', dirname, f"{f.filename}.{f.fileType.lower()}")
-    outpath.parent.mkdir(parents=True, exist_ok=True)
-            
-    outBytes = pcapk.createStandaloneFile(f)
-
-    with outpath.open('wb') as out:
-        out.write(outBytes)
-``` 
-
-
-
-
-### Repacking
-
-Not yet implemented. More work needs to be done on figuring the file structures of PCAPK, PCPACK and amalga.toc.
 
 
 #### Misc

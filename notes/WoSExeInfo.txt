@@ -14,3 +14,8 @@ Target machine: x32
 007ac627   7a  50727     1 [EXP] VS2005 build 50727
 007cc627   7c  50727     1 [RES] VS2005 build 50727
 0078c627   78  50727     1 [LNK] VS2005 build 50727
+
+DetectItEasy:
+Linker: Microsoft Linker (8.00.50727)
+Compiler: Microsoft Visual C/C++ (14.00.50727) [C++/book]
+Tool: Microsoft Visual Studio (2005)

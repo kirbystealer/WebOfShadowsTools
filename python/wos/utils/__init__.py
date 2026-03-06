@@ -1,9 +1,19 @@
 import string
 import json
-from functools import cached_property, lru_cache
+import contextvars
+from contextlib import contextmanager
+
+endian = contextvars.ContextVar("endian", default="<")
+@contextmanager
+def endianness(value):
+    token = endian.set(value)
+    try:
+        yield
+    finally:
+        endian.reset(token)
 
 
-def print_hex(data, grouping=4, per_line=4, show_offsets=True, offset_start=0):
+def format_hex(data, grouping=4, per_line=4, show_offsets=True, offset_start=0):
     padding_size = -len(data) & ((grouping * per_line) - 1)
     
     groups = [''.join([f"{c:02X}" for c in data[i:i + grouping]]) for i in range(0, len(data), grouping)]
@@ -21,17 +31,36 @@ def print_hex(data, grouping=4, per_line=4, show_offsets=True, offset_start=0):
     if show_offsets:
         offsets = [f"0x{i:04X}" for i in range(offset_start, offset_start + len(data), grouping * per_line)]
         lines = ['\t'.join([offset, l]) for offset, l in zip(offsets, lines)]
-    print('\n'.join(lines))
+    return '\n'.join(lines)
 
+def print_hex(data, grouping=4, per_line=4, show_offsets=True, offset_start=0):
+    print (format_hex(data, grouping=4, per_line=4, show_offsets=True, offset_start=0))
 
 # @lru_cache
-def get_hashes(filepath=r"resource/filename_hashes.json"):
+def get_hashes(filepath=None):
     import pathlib
-    p = pathlib.Path(pathlib.Path(__file__).parent.parent, filepath)
+    from importlib.resources import files
+    p = filepath
+    if filepath is None:
+        p = files("wos").joinpath(r"resource/filename_hashes.json")
+    
+    p = pathlib.Path(p)
     return json.loads(p.read_bytes())
+
 
 def hash_to_filename(hash_int):
     known_hashes = get_hashes()
     return known_hashes.get(f"0x{hash_int:08X}")
-    
 
+
+def wosHash(s):
+    r = 0
+    s = s.lower()
+    for c in s:
+        # r += r << 5
+        r = r * 33
+        r &= 0xFFFFFFFF
+        r += ord(c)
+        r &= 0xFFFFFFFF
+    
+    return r

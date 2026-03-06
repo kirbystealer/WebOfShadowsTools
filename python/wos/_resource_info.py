@@ -1,4 +1,4 @@
-RESOURCE_INFO = [
+_RESOURCE_INFO = [
     (0, 0x0, "error", "error", ".NONE", "", "empty_resource_handler"),
     (1, 0x1, "descriptor", "descriptors", ".DESC", "DESC\\", "mashable_resource_handler<class_level_descriptor_set>"),
     (2, 0x2, "sin", "sins", ".SIN", "SIN\\", "mashable_resource_handler<class_sin_container>"),
@@ -127,4 +127,14 @@ RESOURCE_INFO = [
     (102, 0x66, "vertex_shader", "vertex_shaders", ".PCVS", "PCVS\\", "vertex_shader_handler"),
     (103, 0x67, "pixel_shader", "pixel_shaders", ".PCPS", "PCPS\\", "pixel_shader_handler")
 ]
-RESOURCE_INFO = {id: ext for id, id_hex, desc, descp, ext, path, resource_handler_class in RESOURCE_INFO}
+RESOURCE_INFO = {id: ext for id, id_hex, desc, descp, ext, path, resource_handler_class in _RESOURCE_INFO}
+
+RESOURCE_INFO_XE = dict(RESOURCE_INFO)
+INFO_XE = {8: '.XESTCR', 9: '.XESX', 10: '.XEGV', 11: '.XESV', 13: '.TRAF_LT_INFXE', 14: '.XETEXTURE', 15: '.XEFX', 16: '.XEMATERIAL', 17: '.XEMESH', 18: '.XENGLSKELETON', 19: '.XESKEL', 20: '.XEFONT', 21: '.XEANIM', 22: '.XESANIM', 23: '.XEMORPH', 24: '.XEEFXB', 25: '.XEAPK', 27: '.XECVX', 74: '.SCGXE', 75: '.LEGO_MAPXE', 80: '.SM3_LIGHTXE', 88: '.BOX_TRIG_INFXE', 90: '.XEAC', 95: '.XEPACK', 102: '.XEVS', 103: '.XEPS'}
+RESOURCE_INFO_XE.update(INFO_XE)
+
+RESOURCE_INFO_PS3 = dict(RESOURCE_INFO)
+INFO_PS3 = {8: '.PS3STCR', 9: '.PS3SX', 10: '.PS3GV', 11: '.PS3SV', 13: '.TRAF_LT_INFPS3', 14: '.PS3TEXTURE', 15: '.PS3FX', 16: '.PS3MATERIAL', 17: '.PS3MESH', 18: '.PS3NGLSKELETON', 19: '.PS3SKEL', 20: '.PS3FONT', 21: '.PS3ANIM', 22: '.PS3SANIM', 23: '.PS3MORPH', 24: '.PS3EFXB', 25: '.PS3APK', 27: '.PS3CVX', 74: '.SCGPS3', 75: '.LEGO_MAPPS3', 80: '.SM3_LIGHTPS3', 88: '.BOX_TRIG_INFPS3', 90: '.PS3AC', 95: '.PS3PACK', 102: '.PS3VS', 103: '.PS3PS'}
+RESOURCE_INFO_PS3.update(INFO_PS3)
+
+RESOURCE_INFO_PLATFORM = {'pc': RESOURCE_INFO, 'xe': RESOURCE_INFO_XE, 'ps3': RESOURCE_INFO_PS3}

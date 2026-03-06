@@ -1,37 +1,18 @@
 import struct
-import io
-
 import lzo
+from wos.utils import hash_to_filename, endianness, endian
+from wos._resource_info import RESOURCE_INFO, RESOURCE_INFO_PLATFORM
 
-try:
-    from ._utils import print_hex, hash_to_filename
-except:
-    hash_to_filename = None
-
-from ._resource_info import RESOURCE_INFO
 
 NCH_BLOCK_SIZE = 0x80000
-class PCPACKBase():
+class PACKBase():
     
     @staticmethod
     def alignAddressToBoundary(address, alignment):
         return address + (-address & alignment - 1)
     
-    @staticmethod
-    def readNullTerminatedString(data, offset):
-        c = struct.unpack_from("<s", data, offset)[0]
-        filename = b""
-        i = 0
-        while c != b'\x00':
-            c = struct.unpack_from("<s", data, offset + i)[0]
-            filename += c
-            i += 1
-            if i > 256:
-                raise Exception("NullTerminatedString too long: %s" % filename)
-        return filename
-
-
-class PCPACKBlockHeader(PCPACKBase):
+    
+class PACKBlockHeader(PACKBase):
     def __init__(self, archive, data):
         self.archive = archive
         self.data = data
@@ -44,7 +25,8 @@ class PCPACKBlockHeader(PCPACKBase):
     def _parseBytes(self):
         # 32 byte header, block is padded to 0x80000 with \xA1
         magic, compressedDataSize, a2, decompressedDataSize, a4, a5, compressedDataEnd, a6 = struct.unpack_from(
-            "<4s7I", self.data)
+            f"{endian.get()}4s7I", self.data)
+        
         self.magic = magic
         self.compressedDataSize = compressedDataSize
         self.a2 = a2
@@ -55,7 +37,7 @@ class PCPACKBlockHeader(PCPACKBase):
         self.a6 = a6
 
 
-class PCPACKBlock(PCPACKBase):
+class PACKBlock(PACKBase):
     BLOCK_SIGNATURE = b'NCH\x00'
     
     def __init__(self, archive, blockData):
@@ -64,7 +46,7 @@ class PCPACKBlock(PCPACKBase):
         self._parseBytes()
     
     def _parseBytes(self):
-        self.header = PCPACKBlockHeader(self.archive, self.blockData[:32])
+        self.header = PACKBlockHeader(self.archive, self.blockData[:32])
         if self.header.magic != self.BLOCK_SIGNATURE:
             raise Exception(f"Block signature {self.BLOCK_SIGNATURE} missing in compressed block data.")
     
@@ -74,14 +56,14 @@ class PCPACKBlock(PCPACKBase):
         return lzo.decompress(compressedData, False, self.header.decompressedDataSize, algorithm="LZO1X")
 
 
-class PCPACKFileHeader(PCPACKBase):
+class PACKFileHeader(PACKBase):
     
     def __init__(self, archive, offset, index):
         self.archive = archive
         self.offset = offset
         self.index = index
         self._parseBytes()
-        self.fileExt = RESOURCE_INFO.get(self.fileTypeId, '.bin').lower()[1:]
+        self.fileExt = RESOURCE_INFO_PLATFORM.get(self.archive.platform, RESOURCE_INFO).get(self.fileTypeId, '.bin').lower()[1:]
     
     @property
     def actualFilename(self):
@@ -101,12 +83,12 @@ class PCPACKFileHeader(PCPACKBase):
         
     
     def _parseBytes(self):
-        fileHeader = struct.unpack_from("<11I", self.archive.data, self.offset)
-        self.offset += struct.calcsize("<11I")
+        fileHeader = struct.unpack_from(f"{endian.get()}11I", self.archive.data, self.offset)
+        self.offset += struct.calcsize(f"{endian.get()}11I")
         rest = []
         if fileHeader[8] != 0:
-            rest = struct.unpack_from("<8I", self.archive.data, self.offset)
-            self.offset += struct.calcsize("<8I")
+            rest = struct.unpack_from(f"{endian.get()}8I", self.archive.data, self.offset)
+            self.offset += struct.calcsize(f"{endian.get()}8I")
         
         fileHeader = list(fileHeader) + list(rest)
         filenameHash, fileTypeId, dataOffset, dataSize, *_ = fileHeader
@@ -117,31 +99,31 @@ class PCPACKFileHeader(PCPACKBase):
         self.data = self.archive.data[self.dataOffset:self.dataOffset + self.dataSize]
 
 
-class PCPACKFileHeaderTable(PCPACKBase):
+class PACKFileHeaderTable(PACKBase):
     def __init__(self, archive, offset):
         self.archive = archive
         self._parseBytes(offset)
     
     def _parseBytes(self, offset):
-        offset += struct.calcsize("<I") * self.archive.header.fileCount
+        offset += struct.calcsize(f"{endian.get()}I") * self.archive.header.fileCount
         self.fileHeaders = []
         for i in range(self.archive.header.fileCount):
-            fileHeader = PCPACKFileHeader(self.archive, offset, i)
+            fileHeader = PACKFileHeader(self.archive, offset, i)
             self.fileHeaders.append(fileHeader)
             offset = fileHeader.offset
 
 
-class PCPACKHeader(PCPACKBase):
+class PACKHeader(PACKBase):
     def __init__(self, archive):
         self.archive = archive
         self._parseBytes()
     
     def _parseBytes(self):
-        header = struct.unpack_from("<16I", self.archive.data)
+        header = struct.unpack_from(f"{endian.get()}16I", self.archive.data)
         self.fileCount = header[14]
 
 
-class PCPACKArchive(PCPACKBase):
+class PACKArchive(PACKBase):
     FILE_HEADER_TABLE_OFFSET = 0x408
     
     def __init__(self, compressedData):
@@ -161,43 +143,73 @@ class PCPACKArchive(PCPACKBase):
     def _parseBytes(self):
         NCH_BLOCK_SIZE = 0x80000
         
-        self.compressedBlocks = [PCPACKBlock(self, b) for b in [self.compressedData[i:i + NCH_BLOCK_SIZE] for i in
-                                                                range(0, len(self.compressedData), NCH_BLOCK_SIZE)]]
+        self.compressedBlocks = []
+        for i in range(0, len(self.compressedData), NCH_BLOCK_SIZE):
+            raw = self.compressedData[i:i + NCH_BLOCK_SIZE]
+            block = PACKBlock(self, raw)
+            self.compressedBlocks.append(block)
+            
         self.data = b''.join([b.decompressBlock() for b in self.compressedBlocks])
-        self.header = PCPACKHeader(self)
-        self.fileHeaderTable = PCPACKFileHeaderTable(self, self.FILE_HEADER_TABLE_OFFSET)
+        self.header = PACKHeader(self)
+        self.fileHeaderTable = PACKFileHeaderTable(self, self.FILE_HEADER_TABLE_OFFSET)
         
+
+class PCPACKArchive(PACKArchive):
+    endianness = "<"
+    platform = "pc"
+    
+    def __init__(self, *args, **kwargs):
+        with endianness(self.endianness):
+            super().__init__(*args, **kwargs)
+
+class PS3PACKArchive(PACKArchive):
+    endianness = ">"
+    platform = "ps3"
+    
+    def __init__(self, *args, **kwargs):
+        with endianness(self.endianness):
+            super().__init__(*args, **kwargs)
+    
+    def _parseBytes(self):
+        offset = 0
+        i = 0
+        BLOCK_SIGNATURE = b'NCH\x00'
+        self.data = b''
         
-def editExistingFileAndRepack(archive, filename, newFileData):
-    existingFile = archive.getFile(filename)
-    if not existingFile:
-        raise Exception(f"Could not find existing filename {filename} in archive.")
-    
-    if len(newFileData) != existingFile.dataSize:
-        raise Exception("New data size must match existing data size!")
-    
-    start, end = existingFile.dataOffset, existingFile.dataOffset+existingFile.dataSize
-    
-    newData = b''.join([archive.data[:start], newFileData, archive.data[end:]])
-    
-    newData = lzo.compress(newData, 9, False, algorithm="LZO1X")
-    newBlocks = [newData[i:i+NCH_BLOCK_SIZE] for i in range(0, len(newData), NCH_BLOCK_SIZE)]
-    # print([len(b) for b in newBlocks])
-    # compressedBlocks = [lzo.compress(b, 9, False, algorithm="LZO1X") for b in newBlocks]
-    # print([len(b) for b in compressedBlocks])
-    compressedBlocks = newBlocks
-    
-    outBlocks = []
-    for i, blockData in enumerate(compressedBlocks):
-        decompressedBufferSize = len(newBlocks[i])
-        compressedFlag = 1
-        blockHeader = struct.pack("<4s7I", b"NCH\x00", len(blockData), 0, decompressedBufferSize, 0, 0,
-                                  32 + len(blockData),
-                                  compressedFlag)
-        outBlock = blockHeader + blockData
-        paddingLength = NCH_BLOCK_SIZE - len(outBlock)
-        outBlock += b'\xA1' * paddingLength
-        outBlocks.append(outBlock)
-   
-    print([len(b) for b in outBlocks])
-    return b''.join(outBlocks)
+        while offset < len(self.compressedData):
+            magic, dataSize, a1, decompressedDataSize, a2, a3, compressedDataEnd, a4 = struct.unpack_from(
+                f"{endian.get()}4s7I",
+                self.compressedData,
+                offset=offset)
+            
+            compressedDataStart = offset + (compressedDataEnd - dataSize)
+            compressedData = self.compressedData[compressedDataStart:compressedDataStart + dataSize]
+            
+            if magic != BLOCK_SIGNATURE:
+                break
+            
+            shouldDecompress = decompressedDataSize != dataSize
+            if shouldDecompress:
+                decompressed = lzo.decompress(compressedData, False, decompressedDataSize, algorithm="LZO1X")
+            else:
+                decompressed = compressedData
+            
+            self.data += decompressed
+            offset += compressedDataEnd
+            
+            while offset < len(self.compressedData) and self.compressedData[offset] == 0xA1:
+                offset += 1
+            
+            i += 1
+        
+        print(f"Unpacked {i} blocks from PS3Archive")
+        
+        self.header = PACKHeader(self)
+        self.fileHeaderTable = PACKFileHeaderTable(self, self.FILE_HEADER_TABLE_OFFSET)
+
+class XEPACKArchive(PACKArchive):
+    endianness = ">"
+    platform = "xe"
+    def __init__(self, *args, **kwargs):
+        with endianness(self.endianness):
+            super().__init__(*args, **kwargs)

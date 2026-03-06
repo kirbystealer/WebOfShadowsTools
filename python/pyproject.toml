@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wos"
+version = "0.2.0"
+description = "Tools for working with Spider-Man: Web of Shadows"
+requires-python = ">=3.8"
+dependencies = [
+  "python-lzo @ https://github.com/kirbystealer/python-lzo/releases/download/v1.16/python_lzo-1.16-cp38-cp38-win_amd64.whl ; sys_platform == 'win32' and platform_machine == 'AMD64' and python_version == '3.8'",
+  "python-lzo @ https://github.com/kirbystealer/python-lzo/releases/download/v1.16/python_lzo-1.16-cp39-cp39-win_amd64.whl ; sys_platform == 'win32' and platform_machine == 'AMD64' and python_version == '3.9'",
+  "python-lzo @ https://github.com/kirbystealer/python-lzo/releases/download/v1.16/python_lzo-1.16-cp310-cp310-win_amd64.whl ; sys_platform == 'win32' and platform_machine == 'AMD64' and python_version == '3.10'",
+  "python-lzo @ https://github.com/kirbystealer/python-lzo/releases/download/v1.16/python_lzo-1.16-cp311-cp311-win_amd64.whl ; sys_platform == 'win32' and platform_machine == 'AMD64' and python_version == '3.11'",
+  "python-lzo @ https://github.com/kirbystealer/python-lzo/releases/download/v1.16/python_lzo-1.16-cp312-cp312-win_amd64.whl ; sys_platform == 'win32' and platform_machine == 'AMD64' and python_version == '3.12'",
+  "python-lzo @ https://github.com/kirbystealer/python-lzo/releases/download/v1.16/python_lzo-1.16-cp313-cp313-win_amd64.whl ; sys_platform == 'win32' and platform_machine == 'AMD64' and python_version == '3.13'",
+]
+
+[project.scripts]
+unpack_wos = "wos.cli:main"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["wos"]
+include = [
+  "unpack-wos.py",
+]

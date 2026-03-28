@@ -87,3 +87,21 @@ for f in archive.files:
 ### Repacking
 
 Not yet implemented. More work needs to be done on figuring the file structures of APK, PACK and amalga.toc.
+
+### Experimental Repacking
+
+There is now an experimental template-based repacker for `PCPACK` and `XEPACK` archives:
+
+`python repack-wos.py "path/to/original.XEPACK" "path/to/extracted_dir" "path/to/output.XEPACK"`
+
+Or, if installed as a package:
+
+`repack_wos "path/to/original.XEPACK" "path/to/extracted_dir" "path/to/output.XEPACK"`
+
+Current scope and caveats:
+
+- It rebuilds the outer `PCPACK/XEPACK` container from an `unpack_wos -e` directory.
+- It preserves the original pack header/table fields where possible and rewrites file offsets, sizes, and NCH-compressed blocks.
+- It has been validated locally on `GLOBALTEXT_ENGLISH.XEPACK` for unchanged round-trips and edited top-level payloads.
+- It does **not** yet rebuild non-empty inner `PCAPK/XEAPK` archives from extracted `WRAP` files.
+- The unknown `NCH` block header fields are currently copied from the template blocks when possible; this is good enough for parser round-trips, but game/runtime validation is still unknown.

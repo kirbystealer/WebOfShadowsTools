@@ -18,6 +18,7 @@ dependencies = [
 
 [project.scripts]
 unpack_wos = "wos.cli:main"
+repack_wos = "wos.repack:main"
 
 [tool.hatch.metadata]
 allow-direct-references = true

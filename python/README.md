@@ -7,7 +7,7 @@ I'll assume you're using uv, but of course you don't have to.
 
 You can install the latest version of this library directly from the wheel in the Releases section:
 
-`uv pip install "https://github.com/kirbystealer/WebOfShadowsTools/releases/latest/download/wos-0.2.0-py3-none-any.whl"`
+`uv pip install "https://github.com/kirbystealer/WebOfShadowsTools/releases/latest/download/wos-0.2.1-py3-none-any.whl"`
 
 Or to install from source, you can clone the repo and run:
 

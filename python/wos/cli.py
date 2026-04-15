@@ -84,7 +84,7 @@ def list_pack(file_path: str, quiet: bool, with_apk: bool):
             if with_apk and e.fileTypeId == 25:
                 with wos.utils.endianness(archive.endianness):
                     
-                    pcapk_file = apk.APKFArchive(e.data)
+                    pcapk_file = apk.APKFArchive(e.data, archiveFilename=e.filename)
     
                     for f in pcapk_file.files():
                         for i, c in enumerate(f.components):
@@ -129,7 +129,7 @@ def extract_pack(
 
             if with_apk and e.fileTypeId == 25:
                 with wos.utils.endianness(archive.endianness):
-                    apk_archive = apk.APKFArchive(e.data)
+                    apk_archive = apk.APKFArchive(e.data, archiveFilename=e.filename)
     
                     for apk_file in apk_archive.files():
                         apk_outdir = os.path.join(out_dir, "_" + out_name)

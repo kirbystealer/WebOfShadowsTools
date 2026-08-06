@@ -9,6 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "cytoscape": "^3.34.0",
+    "cytoscape-dagre": "^4.0.0",
+    "cytoscape-fcose": "^2.2.0",
+    "prettier": "^3.9.6",
     "vue": "^3.5.39"
   },
   "devDependencies": {

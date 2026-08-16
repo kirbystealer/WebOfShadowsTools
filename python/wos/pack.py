@@ -272,9 +272,6 @@ class XEPACKArchive(PACKArchive):
         with endianness(self.endianness):
             super().__init__(*args, **kwargs)
      
-#output_path = r"E:\WebOfShadowsTools-master_NEW\WebOfShadowsTools-master\python\Decompressed\\"
-#path = r"E:\WebOfShadowsTools-master_NEW\WebOfShadowsTools-master\python\MEGACITY_Wii.REVPACK"
- 
  
 class REVPACKArchive(PACKArchive): # Wii's REVPACK Archives
     endianness = ">"
@@ -323,15 +320,6 @@ class REVPACKArchive(PACKArchive): # Wii's REVPACK Archives
         
         print(f"Unpacked {i} blocks from WiiArchive")
             
-        """with open(output_path + "revpack_decompressed.bin", "wb") as out:
-            out.write(self.data)"""
             
         self.header = PACKHeader(self)
         self.fileHeaderTable = REVPACKFileHeaderTable(self, self.FILE_HEADER_TABLE_OFFSET)
-    
- 
- 
-"""with open(path, "rb") as f:
-    compressed_data = f.read()
-    
-revpack = REVPACKArchive(compressed_data)"""

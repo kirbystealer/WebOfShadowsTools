@@ -33,6 +33,7 @@ Extract all the files from all PACKS in a directory, including APKs and prependi
 | PCPACK    | ✔      | ✔                    | ✖      |
 | XEPACK    | ✔      | ✔                    | ✖      |
 | PS3PACK   | ✔      | ✖                    | ✖      |
+| REVPACK   | ✔      | ✖                    | ✖      |
 
 ### Dependencies
 

@@ -99,6 +99,49 @@ class PACKFileHeader(PACKBase):
         self.data = self.archive.data[self.dataOffset:self.dataOffset + self.dataSize]
 
 
+class REVPACKFileHeader(PACKBase):
+    
+    def __init__(self, archive, offset, index):
+        self.archive = archive
+        self.offset = offset
+        self.index = index
+        self._parseBytes()
+        self.fileExt = RESOURCE_INFO_PLATFORM.get(self.archive.platform, RESOURCE_INFO).get(self.fileTypeId, '.bin').lower()[1:]
+    
+    @property
+    def actualFilename(self):
+        actualFilename = ""
+        try:
+            actualFilename = hash_to_filename(self.filenameHash)
+        except Exception as ex:
+            raise
+        return actualFilename
+    
+    @property
+    def filename(self):
+        actualFilename = self.actualFilename
+        bits = [f"F{self.index + 1:03}", f"0x{self.filenameHash:08X}", f"{actualFilename}", f"T{self.fileTypeId}", f"{self.fileExt}"]
+        bits = [b for b in bits if b]
+        return ".".join(bits)
+        
+    
+    def _parseBytes(self):
+        fileHeader = struct.unpack_from(f"{endian.get()}11I", self.archive.data, self.offset)
+        self.offset += struct.calcsize(f"{endian.get()}11I")
+        rest = []
+        if fileHeader[8] != 0:
+            rest = struct.unpack_from(f"{endian.get()}6I", self.archive.data, self.offset)
+            self.offset += struct.calcsize(f"{endian.get()}6I")
+        
+        fileHeader = list(fileHeader) + list(rest)
+        filenameHash, fileTypeId, dataOffset, dataSize, *_ = fileHeader
+        self.filenameHash = filenameHash
+        self.fileTypeId = fileTypeId
+        self.dataOffset = dataOffset
+        self.dataSize = dataSize
+        self.data = self.archive.data[self.dataOffset:self.dataOffset + self.dataSize]
+        
+
 class PACKFileHeaderTable(PACKBase):
     def __init__(self, archive, offset):
         self.archive = archive
@@ -113,14 +156,29 @@ class PACKFileHeaderTable(PACKBase):
             offset = fileHeader.offset
 
 
+class REVPACKFileHeaderTable(PACKBase): # For Wii Version
+    def __init__(self, archive, offset):
+        self.archive = archive
+        self._parseBytes(offset)
+    
+    def _parseBytes(self, offset):
+        offset += struct.calcsize(f"{endian.get()}I") * self.archive.header.fileCount
+        self.fileHeaders = []
+        for i in range(self.archive.header.fileCount):
+            fileHeader = REVPACKFileHeader(self.archive, offset, i)
+            self.fileHeaders.append(fileHeader)
+            offset = fileHeader.offset
+            
+            
+
 class PACKHeader(PACKBase):
     def __init__(self, archive):
         self.archive = archive
         self._parseBytes()
     
     def _parseBytes(self):
-        header = struct.unpack_from(f"{endian.get()}16I", self.archive.data)
-        self.fileCount = header[14]
+        header = struct.unpack_from(f"{endian.get()}32H", self.archive.data)
+        self.fileCount = header[28]
 
 
 class PACKArchive(PACKBase):
@@ -213,3 +271,55 @@ class XEPACKArchive(PACKArchive):
     def __init__(self, *args, **kwargs):
         with endianness(self.endianness):
             super().__init__(*args, **kwargs)
+     
+ 
+class REVPACKArchive(PACKArchive): # Wii's REVPACK Archives
+    endianness = ">"
+    platform = "wii"
+    
+    FILE_HEADER_TABLE_OFFSET = 0x3BC
+    NCH_BLOCK_SIZE = 0x10000
+    
+    def __init__(self, *args, **kwargs):
+        with endianness(self.endianness):
+            super().__init__(*args, **kwargs)
+            
+        
+            
+    def _parseBytes(self):
+        offset = 0
+        i = 0
+        BLOCK_SIGNATURE = b'NCH\x00'
+        self.data = b''
+        
+        while offset < len(self.compressedData):
+            magic, dataSize, a1, decompressedDataSize, a2, a3, compressedDataEnd, a4 = struct.unpack_from(
+                f"{endian.get()}4s7I",
+                self.compressedData,
+                offset=offset)
+            
+            compressedDataStart = offset + (compressedDataEnd - dataSize)
+            compressedData = self.compressedData[compressedDataStart:compressedDataStart + dataSize]
+            
+            if magic != BLOCK_SIGNATURE:
+                break
+            
+            shouldDecompress = decompressedDataSize != dataSize
+            if shouldDecompress:
+                decompressed = lzo.decompress(compressedData, False, decompressedDataSize, algorithm="LZO1X")
+            else:
+                decompressed = compressedData
+            
+            self.data += decompressed
+            offset += compressedDataEnd
+            
+            while offset < len(self.compressedData) and self.compressedData[offset] == 0xA1:
+                offset += 1
+            
+            i += 1
+        
+        print(f"Unpacked {i} blocks from WiiArchive")
+            
+            
+        self.header = PACKHeader(self)
+        self.fileHeaderTable = REVPACKFileHeaderTable(self, self.FILE_HEADER_TABLE_OFFSET)

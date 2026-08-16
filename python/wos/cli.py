@@ -1,7 +1,7 @@
 """
 usage: unpack_wos [-h] [-e] [-f] [-q] [-pfi] [-apk] input [out_dir]
 
-Unpack or list [PC|XE|PS3]PACK files from a file or a directory.
+Unpack or list [PC|XE|PS3|REV]PACK files from a file or a directory.
 
 positional arguments:
   input                 .*PACK file or directory of .*PACK files
@@ -33,7 +33,8 @@ def get_pack_archive(pack_path: str):
     cls_map = {
         '.PCPACK': pack.PCPACKArchive,
         '.XEPACK': pack.XEPACKArchive,
-        '.PS3PACK': pack.PS3PACKArchive
+        '.PS3PACK': pack.PS3PACKArchive,
+        '.REVPACK': pack.REVPACKArchive,
     }
     archive_cls = cls_map.get(path.suffix.upper(), pack.PCPACKArchive)
     archive = archive_cls(path.read_bytes())
@@ -127,7 +128,7 @@ def extract_pack(
                 if not quiet:
                     print(f"[WROTE] {dst}")
 
-            if with_apk and e.fileTypeId == 25:
+            if with_apk and (e.fileTypeId == 25 or e.fileTypeId == 24):
                 with wos.utils.endianness(archive.endianness):
                     apk_archive = apk.APKFArchive(e.data, archiveFilename=e.filename)
     
@@ -158,7 +159,7 @@ def extract_pack(
 
 def scan_pack_files(input_path: str):
     path = pathlib.Path(input_path)
-    valid_suffixes = {".pcpack", ".xepack", ".ps3pack"}
+    valid_suffixes = {".pcpack", ".xepack", ".ps3pack", ".revpack"}
 
     if path.is_dir():
         for p in sorted(path.iterdir()):
@@ -168,7 +169,7 @@ def scan_pack_files(input_path: str):
         if path.suffix.lower() in valid_suffixes:
             yield str(path)
         else:
-            sys.exit("Error: input file is not a supported pack file (.pcpack, .xepack, .ps3pack)")
+            sys.exit("Error: input file is not a supported pack file (.pcpack, .xepack, .ps3pack, .revpack)")
     else:
         sys.exit("Error: input path not found")
 
